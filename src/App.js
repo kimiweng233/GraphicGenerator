@@ -1,6 +1,7 @@
 import "./App.css";
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
+import ColumnNames from "./Components/ColumnNames";
 import IssueCard from "./Components/IssueCard";
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
     setFileName(file.name);
     const data = await file.arrayBuffer();
     const workbook = XLSX.read(data);
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const worksheet = workbook.Sheets["Daily Report"];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
     //adjust for 1 day negative offset
     for (var i = 0; i < jsonData.length; i++) {
@@ -91,14 +92,6 @@ function App() {
         );
       });
       setDateFiltered(filtered);
-      console.log(filtered);
-      console.log(
-        ExcelDateToJSDate(sheetData[3][Object.keys(sheetData[3])[1]])
-          .toString()
-          .slice(8, 10)
-      );
-      console.log(startDate.slice(8));
-      console.log(endDate);
     }
   };
 
@@ -115,6 +108,8 @@ function App() {
     return new Date(Math.round((date - 25569) * 86400 * 1000));
   }
 
+  console.log(sheetData);
+  console.log(dateFiltered);
   return (
     <div className="log-container">
       <Helmet>
@@ -127,7 +122,7 @@ function App() {
       <h1> Maintenance Log Graphic Generator </h1>
       <input type="file" onChange={(e) => handleFileAsync(e)} />
       <p>
-        FileName: <span>{fileName}</span>
+        File Uploaded: <span>{fileName}</span>
       </p>
       Select start date to filter:{" "}
       <input type="date" className="start-date" onChange={handleStartDateOnChange} />
@@ -141,36 +136,13 @@ function App() {
         Search
       </button>
       <div className="log-display">
+        <ColumnNames />
         {dateFiltered.length > 0 &&
           dateFiltered.reverse().map((issue) => {
             return <IssueCard issue={issue} />;
           })}
       </div>
-      <table id="Table2XLSX">
-        <tbody>
-          <tr>
-            <td colSpan="3">SheetJS Table Export</td>
-          </tr>
-          <tr>
-            <td>Author</td>
-            <td>ID</td>
-            <td>Note</td>
-          </tr>
-          <tr>
-            <td>SheetJS</td>
-            <td>7262</td>
-            <td>Hi!</td>
-          </tr>
-          <tr>
-            <td colSpan="3">
-              <a href="//sheetjs.com">Powered by SheetJS</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <button onClick={xport}>
-        <b>Export XLSX!</b>
-      </button>
+      <div className="break"></div>
     </div>
   );
 }

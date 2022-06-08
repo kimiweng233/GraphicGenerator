@@ -1,5 +1,16 @@
 .issue-container {
+  width: 900px;
+  display: flex;
   border: black;
   border-style: solid;
   border-width: 1px;
+  padding: 4px 0px 4px 10px;
+  align-items: center;
+  margin: auto;
+}
+
+.issue-element {
+  width: 100px;
+  font-size: 14px;
+  margin-left: 20px;
 }
