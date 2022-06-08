@@ -8,9 +8,15 @@ const IssueCard = ({ issue }) => {
 
   return (
     <div className="issue-container">
-      {issue[Object.keys(issue)[0]]} {issue[Object.keys(issue)[1]]}
-      {`${ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(0, 15)}`}{" "}
-      {issue[Object.keys(issue)[2]]} {issue[Object.keys(issue)[3]]}{" "}
+      <span className="issue-element">{issue["NO."]}</span>{" "}
+      <span className="issue-element">{`${ExcelDateToJSDate(issue.Date)
+        .toString()
+        .slice(0, 15)}`}</span>
+      <span className="issue-element">{issue.Shift}</span>
+      <span className="issue-element"> {issue.MES}</span>
+      <span className="issue-element">{issue.Station}</span>
+      <span className="issue-element">{issue.Category}</span>
+      <span className="issue-element">{issue.sub_category}</span>
     </div>
   );
 };
