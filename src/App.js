@@ -1,6 +1,7 @@
 import "./App.css";
 import React, { useState } from "react";
 import { Helmet } from "react-helmet";
+import ColumnNames from "./Components/ColumnNames";
 import IssueCard from "./Components/IssueCard";
 
 function App() {
@@ -86,14 +87,6 @@ function App() {
         );
       });
       setDateFiltered(filtered);
-      console.log(filtered);
-      console.log(
-        ExcelDateToJSDate(sheetData[3][Object.keys(sheetData[3])[1]])
-          .toString()
-          .slice(8, 10)
-      );
-      console.log(startDate.slice(8));
-      console.log(endDate);
     }
   };
 
@@ -101,6 +94,8 @@ function App() {
     return new Date(Math.round((date - 25569) * 86400 * 1000));
   }
 
+  console.log(sheetData);
+  console.log(dateFiltered);
   return (
     <div className="log-container">
       <Helmet>
@@ -113,7 +108,7 @@ function App() {
       <h1> Maintenance Log Graphic Generator </h1>
       <input type="file" onChange={(e) => handleFileAsync(e)} />
       <p>
-        FileName: <span>{fileName}</span>
+        File Uploaded: <span>{fileName}</span>
       </p>
       Select start date to filter:{" "}
       <input type="date" className="start-date" onChange={handleStartDateOnChange} />
@@ -127,6 +122,7 @@ function App() {
         Search
       </button>
       <div className="log-display">
+        <ColumnNames />
         {dateFiltered.length > 0 &&
           dateFiltered.reverse().map((issue) => {
             return <IssueCard issue={issue} />;

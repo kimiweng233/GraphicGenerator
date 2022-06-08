@@ -1,0 +1,34 @@
+.columnnames-container {
+  width: 900px;
+  display: flex;
+  align-items: center;
+  margin: auto;
+}
+
+.cn-no {
+  margin-left: 10px;
+  margin-right: 120px;
+}
+
+.cn-date {
+  margin-right: 50px;
+}
+.cn-shiftno {
+  margin-right: 70px;
+}
+.cn-recorder {
+  margin-right: 70px;
+}
+.cn-station {
+  margin-right: 60px;
+}
+.cn-category {
+  margin-right: 46px;
+}
+h3 {
+  display: inline;
+  margin-right: 0px;
+  font-size: 14px;
+  white-space: nowrap;
+  padding: 0px 0px 0px 10px;
+}
