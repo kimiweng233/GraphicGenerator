@@ -116,7 +116,7 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className="log-container">
       <Helmet>
         {" "}
         <script
@@ -124,24 +124,28 @@ function App() {
           type="text/javascript"
         />
       </Helmet>
+      <h1> Maintenance Log Graphic Generator </h1>
       <input type="file" onChange={(e) => handleFileAsync(e)} />
       <p>
         FileName: <span>{fileName}</span>
       </p>
-      Select start date to filter:
+      Select start date to filter:{" "}
       <input type="date" className="start-date" onChange={handleStartDateOnChange} />
       {startDate}
       <div className="break"></div>
-      Select end date to filter:
+      Select end date to filter:{"   "}
       <input type="date" className="end-date" onChange={handleEndDateOnChange} />
       {endDate}
+      <div className="break"></div>
       <button type="button" onClick={handleOnSubmit}>
         Search
       </button>
-      {dateFiltered.length > 0 &&
-        dateFiltered.reverse().map((issue) => {
-          return <IssueCard issue={issue} />;
-        })}
+      <div className="log-display">
+        {dateFiltered.length > 0 &&
+          dateFiltered.reverse().map((issue) => {
+            return <IssueCard issue={issue} />;
+          })}
+      </div>
       <table id="Table2XLSX">
         <tbody>
           <tr>

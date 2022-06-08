@@ -1,0 +1,19 @@
+.log-container {
+  margin: 80px;
+  padding: 20px;
+  background-color: rgb(228, 227, 227);
+  border-radius: 10px;
+}
+
+.log-display {
+  overflow: scroll;
+  height: 500px;
+}
+
+.start-date {
+  width: 100px;
+}
+.end-date {
+  width: 100px;
+  margin-left: 4px;
+}
