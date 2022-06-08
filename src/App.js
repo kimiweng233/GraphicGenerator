@@ -17,8 +17,9 @@ function App() {
     setFileName(file.name);
     const data = await file.arrayBuffer();
     const workbook = XLSX.read(data);
-    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+    const worksheet = workbook.Sheets["Daily Report"];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    console.log(jsonData);
     //adjust for 1 day negative offset
     for (var i = 0; i < jsonData.length; i++) {
       jsonData[i][Object.keys(jsonData[i])[1]] += 1;
@@ -32,16 +33,6 @@ function App() {
   const handleEndDateOnChange = (e) => {
     setEndDate(e.target.value);
   };
-
-  function findFirstIntegerValue(dataset) {
-    for (const index in dataset) {
-      if (typeof dataset[index] == "number") {
-        if (dataset[index] > 10000) {
-          return dataset[index];
-        }
-      }
-    }
-  }
 
   function getMonthFromString(mon) {
     var months = [
@@ -66,9 +57,13 @@ function App() {
     e.preventDefault();
     if (!startDate || !endDate) {
       alert("Please enter both start and end dates");
+    } else if (startDate > endDate) {
+      alert("Please make sure to set correct dates");
     } else if (sheetData.length === 0) {
       alert("Please upload a valid excel file");
     } else {
+      console.log(ExcelDateToJSDate(sheetData[0]["Date"]));
+      console.log(startDate);
       var filtered = sheetData.filter((issue) => {
         return (
           //year
@@ -101,15 +96,6 @@ function App() {
       console.log(endDate);
     }
   };
-
-  const xport = React.useCallback(async () => {
-    /* Create worksheet from HTML DOM TABLE */
-    const table = document.getElementById("Table2XLSX");
-    const wb = XLSX.utils.table_to_book(table);
-
-    /* Export to file (start a download) */
-    XLSX.writeFile(wb, "SheetJSTable.xlsx");
-  });
 
   function ExcelDateToJSDate(date) {
     return new Date(Math.round((date - 25569) * 86400 * 1000));
@@ -146,31 +132,6 @@ function App() {
             return <IssueCard issue={issue} />;
           })}
       </div>
-      <table id="Table2XLSX">
-        <tbody>
-          <tr>
-            <td colSpan="3">SheetJS Table Export</td>
-          </tr>
-          <tr>
-            <td>Author</td>
-            <td>ID</td>
-            <td>Note</td>
-          </tr>
-          <tr>
-            <td>SheetJS</td>
-            <td>7262</td>
-            <td>Hi!</td>
-          </tr>
-          <tr>
-            <td colSpan="3">
-              <a href="//sheetjs.com">Powered by SheetJS</a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <button onClick={xport}>
-        <b>Export XLSX!</b>
-      </button>
     </div>
   );
 }
