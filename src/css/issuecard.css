@@ -14,3 +14,7 @@
   font-size: 14px;
   margin-left: 20px;
 }
+
+.issue-container:hover {
+  background-color: rgb(201, 196, 196);
+}

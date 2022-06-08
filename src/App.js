@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import ColumnNames from "./Components/ColumnNames";
 import IssueCard from "./Components/IssueCard";
+import ReactTooltip from "react-tooltip";
 
 function App() {
   const XLSX = require("xlsx");
 
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName] = useState("None");
   const [sheetData, setSheetData] = useState([]);
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
@@ -126,7 +127,26 @@ function App() {
         <ColumnNames />
         {dateFiltered.length > 0 &&
           dateFiltered.reverse().map((issue) => {
-            return <IssueCard issue={issue} />;
+            return (
+              <div
+                data-html="true"
+                data-tip={`<span style="color: #FFFFFF; font-size: 16px">Issue #${issue["NO."]}</span> 
+                <br /> <span style="font-size: 11px">${issue.Issue}</span>
+                <br /> 
+                <br /> 
+                <span style="color: #FFFFFF; font-size: 16px">Solution </span> 
+                <br /> <span style="font-size: 11px">${issue.Solution}</span>
+                
+                `}
+                data-offset="{'top': -20}"
+                data-border="true"
+                data-border-color="#5A5A5A"
+                data-background-color="#808080"
+              >
+                <ReactTooltip className="tooltip" />
+                <IssueCard issue={issue} />
+              </div>
+            );
           })}
       </div>
     </div>
