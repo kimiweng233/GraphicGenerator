@@ -6,8 +6,11 @@
 }
 
 .log-display {
-  overflow: scroll;
-  height: 500px;
+  overflow: auto;
+  max-height: 500px;
+}
+.log-display-load {
+  display: none;
 }
 
 .start-date {
@@ -16,4 +19,9 @@
 .end-date {
   width: 100px;
   margin-left: 4px;
+}
+
+.search-button {
+  margin-bottom: 20px;
+  margin-top: 10px;
 }

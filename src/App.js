@@ -12,6 +12,7 @@ function App() {
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
   const [dateFiltered, setDateFiltered] = useState([]);
+  const [load, setLoad] = useState("log-display-load");
 
   const handleFileAsync = async (e) => {
     const file = e.target.files[0];
@@ -56,6 +57,7 @@ function App() {
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
+    setLoad("log-display");
     if (!startDate || !endDate) {
       alert("Please enter both start and end dates");
     } else if (startDate > endDate) {
@@ -94,8 +96,6 @@ function App() {
     return new Date(Math.round((date - 25569) * 86400 * 1000));
   }
 
-  console.log(sheetData);
-  console.log(dateFiltered);
   return (
     <div className="log-container">
       <Helmet>
@@ -112,17 +112,16 @@ function App() {
       </p>
       Select start date to filter:{" "}
       <input type="date" className="start-date" onChange={handleStartDateOnChange} />
-      {startDate}
       <div className="break"></div>
       Select end date to filter:{"   "}
       <input type="date" className="end-date" onChange={handleEndDateOnChange} />
-      {endDate}
       <div className="break"></div>
-      <button type="button" onClick={handleOnSubmit}>
+      <button type="button" className="search-button" onClick={handleOnSubmit}>
         Search
       </button>
-      <div className="log-display">
-        <ColumnNames />
+      <h3>Total Entries Found: {dateFiltered.length}</h3>
+      <ColumnNames />
+      <div className={load}>
         {dateFiltered.length > 0 &&
           dateFiltered.reverse().map((issue) => {
             return <IssueCard issue={issue} />;
