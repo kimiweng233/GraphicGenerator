@@ -119,9 +119,11 @@ function App() {
       <button type="button" className="search-button" onClick={handleOnSubmit}>
         Search
       </button>
-      <h3>Total Entries Found: {dateFiltered.length}</h3>
-      <ColumnNames />
       <div className={load}>
+        <h3 className="total-entries-found">
+          Total Entries Found: {dateFiltered.length}
+        </h3>
+        <ColumnNames />
         {dateFiltered.length > 0 &&
           dateFiltered.reverse().map((issue) => {
             return <IssueCard issue={issue} />;

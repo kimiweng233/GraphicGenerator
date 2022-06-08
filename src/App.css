@@ -6,13 +6,19 @@
 }
 
 .log-display {
+  border-radius: 10px;
+  padding: 10px;
   overflow: auto;
   max-height: 500px;
+  background-color: rgb(228, 227, 227);
 }
+
 .log-display-load {
   display: none;
 }
 
+.log-display .total-entries-found {
+}
 .start-date {
   width: 100px;
 }
