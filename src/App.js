@@ -208,9 +208,9 @@ function App() {
       </div>
       {!hideGraph && 
         <div style={{width: "700px", height: "350px", margin: "0 auto"}}>
-          <select type="select" onChange={(e) => setSubCategory(e.target.value)}>
           <DoughnutChart data_in={Object.values(categories).map(cat => cat["total"])} labels_in={Object.keys(categories)}/> 
-          {Object.keys(categories).map(cat => {
+          <select type="select" onChange={(e) => setSubCategory(e.target.value)}>
+            {Object.keys(categories).map(cat => {
               return (
                 <option value={cat}>{cat}</option>
               )
