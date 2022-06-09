@@ -100,6 +100,29 @@ function App() {
     return new Date(Math.round((date - 25569) * 86400 * 1000));
   }
 
+  function mode(array, specifier) {
+    if (array.length == 0) return null;
+    var modeMap = {};
+    var maxEl = array[0][specifier],
+      maxCount = 1;
+    for (var i = 0; i < array.length; i++) {
+      var el = array[i][specifier];
+      if (el != null && el != "") {
+        if (modeMap[el] == null || "") modeMap[el] = 1;
+        else modeMap[el]++;
+        if (modeMap[el] > maxCount) {
+          maxEl = el;
+          maxCount = modeMap[el];
+        }
+      }
+    }
+    return (
+      <span className="stats-subtext">
+        {maxEl} - {maxCount} entries
+      </span>
+    );
+  }
+
   return (
     <div className="log-container">
       <Helmet>
@@ -125,7 +148,18 @@ function App() {
       </button>
       <div className={load}>
         <span className="fixed-text">
-          <h3>Total Entries Found: {dateFiltered.length}</h3>
+          <div className="stats">
+            <h3>
+              Total Entries Found:{" "}
+              <span className="stats-subtext">{dateFiltered.length}</span>
+            </h3>
+            <h3>&#8226;</h3>
+            <h3>Busiest Shift: {mode(dateFiltered, "Shift")}</h3>
+            <h3>&#8226;</h3>
+            <h3>Most Entries Recorded: {mode(dateFiltered, "MES")}</h3>
+            <h3>&#8226;</h3>
+            <h3>Most Frequent Station: {mode(dateFiltered, "Station")}</h3>
+          </div>
           <ColumnNames />
         </span>
         <div className="entries-container">
