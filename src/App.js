@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Helmet } from "react-helmet";
 import ColumnNames from "./Components/ColumnNames";
 import IssueCard from "./Components/IssueCard";
-import ReactTooltip from "react-tooltip";
+import DoughnutChart from "./Charts/Doughnut";
 
 function App() {
   const XLSX = require("xlsx");
@@ -15,6 +15,17 @@ function App() {
   const [dateFiltered, setDateFiltered] = useState([]);
   const [load, setLoad] = useState("log-display-load");
   const [hideLabels, setHideLabels] = useState("log-display-load");
+
+  const [categories, setCategories] = useState({"MES": 0, 
+                                                "PLC": 0, 
+                                                "Operational Assistance": 0, 
+                                                "IT" : 0, 
+                                                "Material": 0, 
+                                                "Customer": 0, 
+                                                "MES-PLC Communication": 0, 
+                                                "Others": 0});
+  const [subCategory, setSubCategory] = useState ("MES");                                    
+  const [hideGraph, setHideGraph] = useState(true);
 
   const handleFileAsync = async (e) => {
     const file = e.target.files[0];
@@ -93,6 +104,32 @@ function App() {
       setDateFiltered(filtered);
       setLoad("log-display");
       setHideLabels("label-display");
+      var categories_temp = {
+        "MES": {"total": 0, "data": {"total": 0, "MES signal didn't send/clear": 0, "work order status not correct": 0, "Pisces website not working (9190 rebuild)": 0, "data configuration not correct": 0, "manually insert WO": 0, "N/A": 0, "Others": 0}}, 
+        "PLC": {"total": 0, "data": {"PLC signal didn't send/clear": 0, "Camera/sensor/clip not working": 0, "RFID not reading carrier number": 0, "PLC hardware failure": 0, "N/A": 0, "Others": 0}}, 
+        "Operational assist": {"total": 0, "data": {"rebuild request": 0, "reset station": 0, "reprint label": 0, "problem solved before arrival": 0, "install wrong part": 0, "lost part or label": 0, "unmarried": 0, "Kitting sequencing/verification": 0, "N/A": 0, "Others": 0}}, 
+        "IT" : {"total": 0, "data": {"printer failure": 0, "PC failure": 0, "server failure": 0, "cables tangled/disconnect": 0, "install wrong part": 0, "replace paper": 0, "N/A": 0, "Others": 0}}, 
+        "Material": {"total": 0, "data": {"part revision": 0, "wrong part": 0, "bad part": 0, "no part": 0, "N/A": 0, "Others": 0}}, 
+        "Customer": {"total": 0, "data": {"cancelled unit": 0, "short/partial shipping": 0, "N/A": 0, "Others": 0}}, 
+        "MES_PLC communication": {"total": 0, "data": {"handshake": 0, "N/A": 0, "Others": 0}}, 
+        "Others": {"total": 0, "data": {"TBD": 0, "N/A": 0, "Others": 0}}
+      };
+      filtered.map(entry => {
+        if ("Category" in entry) {
+          categories_temp[entry["Category"]]["total"] += 1;
+          if ("sub_category" in entry ) {
+            if (entry["sub_category"] in categories_temp[entry["Category"]]["data"]) {
+              categories_temp[entry["Category"]]["data"][entry["sub_category"]] += 1;
+            } else {
+              categories_temp[entry["Category"]]["data"]["Others"] += 1;
+            }
+          } else {
+            categories_temp[entry["Category"]]["data"]["N/A"] += 1;
+          }
+        }
+      })
+      setCategories(categories_temp);
+      setHideGraph(false);
     }
   };
 
@@ -169,6 +206,18 @@ function App() {
             })}
         </div>
       </div>
+      {!hideGraph && 
+        <div style={{width: "700px", height: "350px", margin: "0 auto"}}>
+          <select type="select" onChange={(e) => setSubCategory(e.target.value)}>
+          <DoughnutChart data_in={Object.values(categories).map(cat => cat["total"])} labels_in={Object.keys(categories)}/> 
+          {Object.keys(categories).map(cat => {
+              return (
+                <option value={cat}>{cat}</option>
+              )
+            })}
+          </select>
+          <DoughnutChart data_in={Object.values(categories[subCategory]["data"])} labels_in={Object.keys(categories[subCategory]["data"])}/> 
+        </div>}
     </div>
   );
 }
