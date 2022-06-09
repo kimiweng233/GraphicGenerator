@@ -41,13 +41,16 @@ function App() {
     for (var i = 0; i < jsonData.length; i++) {
       jsonData[i][Object.keys(jsonData[i])[1]] += 1;
     }
+    console.log(jsonData);
     setSheetData(jsonData);
   };
 
   const handleStartDateOnChange = (e) => {
+    console.log(e.target.value);
     setStartDate(e.target.value);
   };
   const handleEndDateOnChange = (e) => {
+    console.log(e.target.value);
     setEndDate(e.target.value);
   };
 
@@ -70,6 +73,40 @@ function App() {
     return months.indexOf(mon);
   }
 
+  function dateFiltering(numb) {
+    const year_num = ExcelDateToJSDate(numb).toString().slice(11, 15);
+    const month_num = getMonthFromString(ExcelDateToJSDate(numb).toString().slice(5, 7));
+    const day_num = ExcelDateToJSDate(numb).toString().slice(8, 10);
+    const startDateYear = startDate.slice(0, 4);
+    const endDateYear = endDate.slice(0, 4);
+    const startDateMonth = startDate.slice(5, 7);
+    const endDateMonth = endDate.slice(5, 7);
+    const startDateDay = startDate.slice(8);
+    const endDateDay = endDate.slice(8);
+
+    // year check
+    if (year_num >= startDateYear && year_num <= endDateYear) {
+      if (month_num >= startDateMonth && month_num <= endDateMonth) {
+        if (year_num == startDateYear && month_num < startDateMonth) {
+          return false;
+        }
+        if (year_num == endDateYear && month_num > endDateMonth) {
+          return false;
+        }
+        if (day_num >= startDateDay && day_num <= endDateDay) {
+          if (month_num == startDateMonth && day_num < startDateDay) {
+            return false;
+          }
+          if (month_num == endDateMonth && day_num < endDateDay) {
+            return false;
+          }
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   const handleOnSubmit = (e) => {
     e.preventDefault();
 
@@ -80,8 +117,6 @@ function App() {
     } else if (sheetData.length === 0) {
       alert("Please upload a valid excel file");
     } else {
-      console.log(ExcelDateToJSDate(sheetData[0]["Date"]));
-      console.log(startDate);
       var filtered = sheetData.filter((issue) => {
         var startDateJS = new Date(startDate);
         var endDateJS = new Date(endDate);
