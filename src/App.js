@@ -127,26 +127,7 @@ function App() {
         <ColumnNames />
         {dateFiltered.length > 0 &&
           dateFiltered.reverse().map((issue) => {
-            return (
-              <div
-                data-html="true"
-                data-tip={`<span style="color: #FFFFFF; font-size: 16px">Issue #${issue["NO."]}</span> 
-                <br /> <span style="font-size: 11px">${issue.Issue}</span>
-                <br /> 
-                <br /> 
-                <span style="color: #FFFFFF; font-size: 16px">Solution </span> 
-                <br /> <span style="font-size: 11px">${issue.Solution}</span>
-                
-                `}
-                data-offset="{'top': -20}"
-                data-border="true"
-                data-border-color="#5A5A5A"
-                data-background-color="#808080"
-              >
-                <ReactTooltip className="tooltip" />
-                <IssueCard issue={issue} />
-              </div>
-            );
+            return <IssueCard issue={issue} />;
           })}
       </div>
     </div>
