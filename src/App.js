@@ -14,6 +14,7 @@ function App() {
   const [endDate, setEndDate] = useState();
   const [dateFiltered, setDateFiltered] = useState([]);
   const [load, setLoad] = useState("log-display-load");
+  const [hideLabels, setHideLabels] = useState("log-display-load");
 
   const handleFileAsync = async (e) => {
     const file = e.target.files[0];
@@ -58,7 +59,7 @@ function App() {
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
-    setLoad("log-display");
+
     if (!startDate || !endDate) {
       alert("Please enter both start and end dates");
     } else if (startDate > endDate) {
@@ -90,6 +91,8 @@ function App() {
         );
       });
       setDateFiltered(filtered);
+      setLoad("log-display");
+      setHideLabels("label-display");
     }
   };
 
@@ -121,14 +124,16 @@ function App() {
         Search
       </button>
       <div className={load}>
-        <h3 className="total-entries-found">
-          Total Entries Found: {dateFiltered.length}
-        </h3>
-        <ColumnNames />
-        {dateFiltered.length > 0 &&
-          dateFiltered.reverse().map((issue) => {
-            return <IssueCard issue={issue} />;
-          })}
+        <span className="fixed-text">
+          <h3>Total Entries Found: {dateFiltered.length}</h3>
+          <ColumnNames />
+        </span>
+        <div className="entries-container">
+          {dateFiltered.length > 0 &&
+            dateFiltered.reverse().map((issue) => {
+              return <IssueCard issue={issue} />;
+            })}
+        </div>
       </div>
     </div>
   );

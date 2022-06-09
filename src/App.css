@@ -1,23 +1,29 @@
 .log-container {
   margin: 80px;
-  padding: 20px;
+  padding: 20px 20px 20px 20px;
   background-color: rgb(248, 245, 245);
   border-radius: 10px;
+  overflow: hidden;
 }
 
 .log-display {
   border-radius: 10px;
   padding: 10px;
-  overflow: auto;
-  max-height: 500px;
+
   background-color: rgb(228, 227, 227);
 }
 
+.entries-container {
+  max-height: 500px;
+  overflow: auto;
+}
 .log-display-load {
   display: none;
 }
 
-.log-display .total-entries-found {
+.log-display .fixed-text {
+  position: sticky;
+  top: 0px;
 }
 .start-date {
   width: 100px;
