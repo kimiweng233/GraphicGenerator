@@ -39,13 +39,16 @@ function App() {
     for (var i = 0; i < jsonData.length; i++) {
       jsonData[i][Object.keys(jsonData[i])[1]] += 1;
     }
+    console.log(jsonData)
     setSheetData(jsonData);
   };
 
   const handleStartDateOnChange = (e) => {
+    console.log(e.target.value);
     setStartDate(e.target.value);
   };
   const handleEndDateOnChange = (e) => {
+    console.log(e.target.value);
     setEndDate(e.target.value);
   };
 
@@ -68,6 +71,40 @@ function App() {
     return months.indexOf(mon);
   }
 
+  function dateFiltering(numb) {
+    const year_num = ExcelDateToJSDate(numb).toString().slice(11, 15);
+    const month_num = getMonthFromString(ExcelDateToJSDate(numb).toString().slice(5, 7));
+    const day_num = ExcelDateToJSDate(numb).toString().slice(8, 10);
+    const startDateYear = startDate.slice(0, 4);
+    const endDateYear = endDate.slice(0, 4);
+    const startDateMonth = startDate.slice(5, 7);
+    const endDateMonth = endDate.slice(5, 7);
+    const startDateDay = startDate.slice(8);
+    const endDateDay = endDate.slice(8);
+
+    // year check
+    if (year_num >= startDateYear && year_num <= endDateYear) {
+      if (month_num >= startDateMonth && month_num <= endDateMonth) {
+        if (year_num == startDateYear && month_num < startDateMonth) {
+          return false
+        }
+        if (year_num == endDateYear && month_num > endDateMonth) {
+          return false
+        }
+        if (day_num >= startDateDay && day_num <= endDateDay) {
+          if (month_num == startDateMonth && day_num < startDateDay) {
+            return false;
+          }
+          if (month_num == endDateMonth && day_num < endDateDay) {
+            return false;
+          }
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   const handleOnSubmit = (e) => {
     e.preventDefault();
 
@@ -78,34 +115,14 @@ function App() {
     } else if (sheetData.length === 0) {
       alert("Please upload a valid excel file");
     } else {
-      console.log(ExcelDateToJSDate(sheetData[0]["Date"]));
-      console.log(startDate);
       var filtered = sheetData.filter((issue) => {
-        return (
-          //year
-          ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(11, 15) >=
-            startDate.slice(0, 4) &&
-          ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(11, 15) <=
-            endDate.slice(0, 4) &&
-          //month
-          getMonthFromString(
-            ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(4, 7)
-          ) >= startDate.slice(5, 7) &&
-          getMonthFromString(
-            ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(4, 7)
-          ) <= endDate.slice(5, 7) &&
-          //day
-          ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(8, 10) >=
-            startDate.slice(8) &&
-          ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(8, 10) <=
-            endDate.slice(8)
-        );
+        return (dateFiltering(issue[Object.keys(issue)[1]]));
       });
       setDateFiltered(filtered);
       setLoad("log-display");
       setHideLabels("label-display");
       var categories_temp = {
-        "MES": {"total": 0, "data": {"total": 0, "MES signal didn't send/clear": 0, "work order status not correct": 0, "Pisces website not working (9190 rebuild)": 0, "data configuration not correct": 0, "manually insert WO": 0, "N/A": 0, "Others": 0}}, 
+        "MES": {"total": 0, "data": {"MES signal didn't send/clear": 0, "work order status not correct": 0, "Pisces website not working (9190 rebuild)": 0, "data configuration not correct": 0, "manually insert WO": 0, "N/A": 0, "Others": 0}}, 
         "PLC": {"total": 0, "data": {"PLC signal didn't send/clear": 0, "Camera/sensor/clip not working": 0, "RFID not reading carrier number": 0, "PLC hardware failure": 0, "N/A": 0, "Others": 0}}, 
         "Operational assist": {"total": 0, "data": {"rebuild request": 0, "reset station": 0, "reprint label": 0, "problem solved before arrival": 0, "install wrong part": 0, "lost part or label": 0, "unmarried": 0, "Kitting sequencing/verification": 0, "N/A": 0, "Others": 0}}, 
         "IT" : {"total": 0, "data": {"printer failure": 0, "PC failure": 0, "server failure": 0, "cables tangled/disconnect": 0, "install wrong part": 0, "replace paper": 0, "N/A": 0, "Others": 0}}, 
