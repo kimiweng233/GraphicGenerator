@@ -149,7 +149,6 @@ function App() {
         MES: {
           total: 0,
           data: {
-            total: 0,
             "MES signal didn't send/clear": 0,
             "work order status not correct": 0,
             "Pisces website not working (9190 rebuild)": 0,
@@ -233,6 +232,7 @@ function App() {
           }
         }
       });
+      console.log(categories_temp);
       setCategories(categories_temp);
       setHideGraph(false);
     }
@@ -313,11 +313,11 @@ function App() {
       </div>
       {!hideGraph && (
         <div style={{ width: "700px", height: "350px", margin: "0 auto" }}>
+          <DoughnutChart
+            data_in={Object.values(categories).map((cat) => cat["total"])}
+            labels_in={Object.keys(categories)}
+          />
           <select type="select" onChange={(e) => setSubCategory(e.target.value)}>
-            <DoughnutChart
-              data_in={Object.values(categories).map((cat) => cat["total"])}
-              labels_in={Object.keys(categories)}
-            />
             {Object.keys(categories).map((cat) => {
               return <option value={cat}>{cat}</option>;
             })}
