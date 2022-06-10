@@ -46,11 +46,9 @@ function App() {
   };
 
   const handleStartDateOnChange = (e) => {
-    console.log(e.target.value);
     setStartDate(e.target.value);
   };
   const handleEndDateOnChange = (e) => {
-    console.log(e.target.value);
     setEndDate(e.target.value);
   };
 
@@ -119,32 +117,20 @@ function App() {
     } else {
       var filtered = sheetData.filter((issue) => {
         var startDateJS = new Date(startDate);
+        startDateJS.setDate(startDateJS.getDate() + 1);
         var endDateJS = new Date(endDate);
+        endDateJS.setDate(endDateJS.getDate() + 1);
+        console.log("start date" + startDateJS);
+        console.log("end date" + endDateJS);
         return (
           ExcelDateToJSDate(issue.Date) >= startDateJS &&
           ExcelDateToJSDate(issue.Date) <= endDateJS
         );
-        // //year
-        // ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(11, 15) >=
-        //   startDate.slice(0, 4) &&
-        // ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(11, 15) <=
-        //   endDate.slice(0, 4) &&
-        // //month
-        // getMonthFromString(
-        //   ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(4, 7)
-        // ) >= startDate.slice(5, 7) &&
-        // getMonthFromString(
-        //   ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(4, 7)
-        // ) <= endDate.slice(5, 7) &&
-        // //day
-        // ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(8, 10) >=
-        //   startDate.slice(8) &&
-        // ExcelDateToJSDate(issue[Object.keys(issue)[1]]).toString().slice(8, 10) <=
-        //   endDate.slice(8)
       });
       setDateFiltered(filtered);
       setLoad("log-display");
       setHideLabels("label-display");
+
       var categories_temp = {
         MES: {
           total: 0,
@@ -312,7 +298,7 @@ function App() {
         </div>
       </div>
       {!hideGraph && (
-        <div style={{ width: "700px", height: "350px", margin: "0 auto" }}>
+        <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
           <DoughnutChart
             data_in={Object.values(categories).map((cat) => cat["total"])}
             labels_in={Object.keys(categories)}
@@ -326,7 +312,7 @@ function App() {
             data_in={Object.values(categories[subCategory]["data"])}
             labels_in={Object.keys(categories[subCategory]["data"])}
           />
-        </div>
+        </span>
       )}
     </div>
   );
