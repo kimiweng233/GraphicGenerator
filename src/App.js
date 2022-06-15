@@ -262,23 +262,27 @@ function App() {
             })}
         </div>
       </div>
-      {!hideGraph && (
-        <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
-          <DoughnutChart
-            data_in={Object.values(categories).map((cat) => cat["total"])}
-            labels_in={Object.keys(categories)}
-          />
-          <select type="select" onChange={(e) => setSubCategory(e.target.value)}>
-            {Object.keys(categories).map((cat) => {
-              return <option value={cat}>{cat}</option>;
-            })}
-          </select>
-          <DoughnutChart
-            data_in={Object.values(categories[subCategory]["data"])}
-            labels_in={Object.keys(categories[subCategory]["data"])}
-          />
-        </span>
-      )}
+      <div className="graph">
+        {!hideGraph && (
+          <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
+            <DoughnutChart
+              data_in={Object.values(categories).map((cat) => cat["total"])}
+              labels_in={Object.keys(categories)}
+              title_in="All Categories"
+            />
+            <select type="select" onChange={(e) => setSubCategory(e.target.value)}>
+              {Object.keys(categories).map((cat) => {
+                return <option value={cat}>{cat}</option>;
+              })}
+            </select>
+            <DoughnutChart
+              data_in={Object.values(categories[subCategory]["data"])}
+              labels_in={Object.keys(categories[subCategory]["data"])}
+              title_in="Sub Category Graph"
+            />
+          </span>
+        )}
+      </div>
     </div>
   );
 }
