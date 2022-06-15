@@ -184,6 +184,7 @@ function App() {
       });
       console.log(categories_temp);
       setCategories(categories_temp);
+      setHideGraph(false);
     }
   };
 
@@ -260,7 +261,6 @@ function App() {
             })}
         </div>
       </div>
-<<<<<<< HEAD
       {!hideGraph && (
         <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
           <DoughnutChart
@@ -278,11 +278,6 @@ function App() {
           />
         </span>
       )}
-=======
-      <div style={{width: "700px", height: "400px", margin: "0 auto"}}>
-        <DoughnutChart /> 
-      </div>
->>>>>>> ddd98799 (j)
     </div>
   );
 }
