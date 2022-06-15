@@ -70,41 +70,6 @@ function App() {
     ];
     return months.indexOf(mon);
   }
-
-  function dateFiltering(numb) {
-    const year_num = ExcelDateToJSDate(numb).toString().slice(11, 15);
-    const month_num = getMonthFromString(ExcelDateToJSDate(numb).toString().slice(5, 7));
-    const day_num = ExcelDateToJSDate(numb).toString().slice(8, 10);
-    const startDateYear = startDate.slice(0, 4);
-    const endDateYear = endDate.slice(0, 4);
-    const startDateMonth = startDate.slice(5, 7);
-    const endDateMonth = endDate.slice(5, 7);
-    const startDateDay = startDate.slice(8);
-    const endDateDay = endDate.slice(8);
-
-    // year check
-    if (year_num >= startDateYear && year_num <= endDateYear) {
-      if (month_num >= startDateMonth && month_num <= endDateMonth) {
-        if (year_num == startDateYear && month_num < startDateMonth) {
-          return false;
-        }
-        if (year_num == endDateYear && month_num > endDateMonth) {
-          return false;
-        }
-        if (day_num >= startDateDay && day_num <= endDateDay) {
-          if (month_num == startDateMonth && day_num < startDateDay) {
-            return false;
-          }
-          if (month_num == endDateMonth && day_num < endDateDay) {
-            return false;
-          }
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   const handleOnSubmit = (e) => {
     e.preventDefault();
 
@@ -129,7 +94,6 @@ function App() {
       });
       setDateFiltered(filtered);
       setLoad("log-display");
-      setHideLabels("label-display");
 
       var categories_temp = {
         MES: {
@@ -220,7 +184,6 @@ function App() {
       });
       console.log(categories_temp);
       setCategories(categories_temp);
-      setHideGraph(false);
     }
   };
 
