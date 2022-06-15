@@ -169,6 +169,7 @@ function App() {
         Others: { total: 0, data: { TBD: 0, "N/A": 0, Others: 0 } },
       };
       filtered.map((entry) => {
+        console.log(entry);
         if ("Category" in entry) {
           categories_temp[entry["Category"]]["total"] += 1;
           if ("sub_category" in entry) {
