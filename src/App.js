@@ -240,6 +240,7 @@ function App() {
         Search
       </button>
       <div className={load}>
+        <h1>Log Viewer</h1>
         <span className="fixed-text">
           <div className="stats">
             <h3>
@@ -262,27 +263,34 @@ function App() {
             })}
         </div>
       </div>
-      <div className="graph">
-        {!hideGraph && (
+      {!hideGraph && (
+        <div className="graph">
+          <h1>Graph Viewer</h1>
           <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
             <DoughnutChart
               data_in={Object.values(categories).map((cat) => cat["total"])}
               labels_in={Object.keys(categories)}
               title_in="All Categories"
             />
-            <select type="select" onChange={(e) => setSubCategory(e.target.value)}>
+
+            <select
+              className="select-category"
+              type="select"
+              onChange={(e) => setSubCategory(e.target.value)}
+            >
               {Object.keys(categories).map((cat) => {
                 return <option value={cat}>{cat}</option>;
               })}
             </select>
+
             <DoughnutChart
               data_in={Object.values(categories[subCategory]["data"])}
               labels_in={Object.keys(categories[subCategory]["data"])}
-              title_in="Sub Category Graph"
+              title_in={`${subCategory} Sub Categories`}
             />
           </span>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
