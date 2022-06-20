@@ -1,7 +1,8 @@
 import { Bar } from "react-chartjs-2";
-import { Chart, registerables } from "chart.js";
+import { Chart, registerables, defaults } from "chart.js";
 Chart.register(...registerables);
 
+defaults.font.size = 8;
 const DoughnutChart = (props) => {
   let { labels_in, data_in, title_in } = props;
   const data = {

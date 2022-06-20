@@ -4,6 +4,8 @@ import { Helmet } from "react-helmet";
 import ColumnNames from "./Components/ColumnNames";
 import IssueCard from "./Components/IssueCard";
 import DoughnutChart from "./Charts/Doughnut";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf"
 
 function App() {
   const XLSX = require("xlsx");
@@ -36,40 +38,21 @@ function App() {
     const workbook = XLSX.read(data);
     const worksheet = workbook.Sheets["Daily Report"];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
-    console.log(jsonData);
     //adjust for 1 day negative offset
     for (var i = 0; i < jsonData.length; i++) {
       jsonData[i][Object.keys(jsonData[i])[1]] += 1;
     }
-    console.log(jsonData);
     setSheetData(jsonData);
   };
 
   const handleStartDateOnChange = (e) => {
     setStartDate(e.target.value);
   };
+
   const handleEndDateOnChange = (e) => {
     setEndDate(e.target.value);
   };
 
-  function getMonthFromString(mon) {
-    var months = [
-      "",
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    return months.indexOf(mon);
-  }
   const handleOnSubmit = (e) => {
     e.preventDefault();
 
@@ -85,8 +68,6 @@ function App() {
         startDateJS.setDate(startDateJS.getDate() + 1);
         var endDateJS = new Date(endDate);
         endDateJS.setDate(endDateJS.getDate() + 1);
-        console.log("start date" + startDateJS);
-        console.log("end date" + endDateJS);
         return (
           ExcelDateToJSDate(issue.Date) >= startDateJS &&
           ExcelDateToJSDate(issue.Date) <= endDateJS
@@ -169,7 +150,6 @@ function App() {
         Others: { total: 0, data: { TBD: 0, "N/A": 0, Others: 0 } },
       };
       filtered.map((entry) => {
-        console.log(entry);
         if ("Category" in entry) {
           categories_temp[entry["Category"]]["total"] += 1;
           if ("sub_category" in entry) {
@@ -183,7 +163,6 @@ function App() {
           }
         }
       });
-      console.log(categories_temp);
       setCategories(categories_temp);
       setHideGraph(false);
     }
@@ -192,6 +171,31 @@ function App() {
   function ExcelDateToJSDate(date) {
     return new Date(Math.round((date - 25569) * 86400 * 1000));
   }
+
+  const generatePDF = e => {
+    const but = e.target;
+    but.style.display = "none";
+    let input = window.document.getElementsByClassName("generateGraph")[0];
+    html2canvas(input).then(canvas => {
+      console.log(canvas);
+      const img = canvas.toDataURL();
+      const pdf = new jsPDF("l", "pt")
+      console.log(input.offsetLeft);
+      console.log(input.offsetTop);
+      console.log(input.clientWidth);
+      console.log(input.clientHeight);
+      pdf.addImage(
+        img,
+        "png",
+        20,
+        0,
+        800,
+        500,
+      );
+      pdf.save("chart.pdf");
+      but.style.display = "block";
+    })
+  };
 
   function mode(array, specifier) {
     if (array.length == 0) return null;
@@ -219,7 +223,6 @@ function App() {
   return (
     <div className="log-container">
       <Helmet>
-        {" "}
         <script
           src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"
           type="text/javascript"
@@ -267,12 +270,13 @@ function App() {
         <div className="graph">
           <h1>Graph Viewer</h1>
           <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
-            <DoughnutChart
-              data_in={Object.values(categories).map((cat) => cat["total"])}
-              labels_in={Object.keys(categories)}
-              title_in="All Categories"
-            />
-
+            <div className="generateGraph">
+              <DoughnutChart
+                data_in={Object.values(categories).map((cat) => cat["total"])}
+                labels_in={Object.keys(categories)}
+                title_in="All Categories"
+              />
+            </div>
             <select
               className="select-category"
               type="select"
@@ -289,6 +293,7 @@ function App() {
               title_in={`${subCategory} Sub Categories`}
             />
           </span>
+          <button onClick={(e) => generatePDF(e)}>Generate PDF</button>
         </div>
       )}
     </div>
