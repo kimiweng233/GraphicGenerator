@@ -5,7 +5,7 @@ import ColumnNames from "./Components/ColumnNames";
 import IssueCard from "./Components/IssueCard";
 import DoughnutChart from "./Charts/Doughnut";
 import html2canvas from "html2canvas";
-import jsPDF from "jspdf"
+import jsPDF from "jspdf";
 
 function App() {
   const XLSX = require("xlsx");
@@ -172,29 +172,22 @@ function App() {
     return new Date(Math.round((date - 25569) * 86400 * 1000));
   }
 
-  const generatePDF = e => {
+  const generatePDF = (e) => {
     const but = e.target;
     but.style.display = "none";
     let input = window.document.getElementsByClassName("generateGraph")[0];
-    html2canvas(input).then(canvas => {
+    html2canvas(input).then((canvas) => {
       console.log(canvas);
       const img = canvas.toDataURL();
-      const pdf = new jsPDF("l", "pt")
+      const pdf = new jsPDF("l", "pt");
       console.log(input.offsetLeft);
       console.log(input.offsetTop);
       console.log(input.clientWidth);
       console.log(input.clientHeight);
-      pdf.addImage(
-        img,
-        "png",
-        20,
-        0,
-        800,
-        500,
-      );
+      pdf.addImage(img, "png", 20, 0, 800, 500);
       pdf.save("chart.pdf");
       but.style.display = "block";
-    })
+    });
   };
 
   function mode(array, specifier) {
