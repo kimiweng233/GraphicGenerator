@@ -49,6 +49,8 @@
   font-weight: normal;
 }
 
+.bar-graph {
+}
 .graph {
   padding: 20px 150px;
   background-color: rgb(238, 236, 236);
@@ -57,14 +59,14 @@
 }
 
 .graph h1 {
-  margin-left: 40%;
+  text-align: center;
 }
 
 .select-category {
   margin-top: 30px;
   margin-bottom: 30px;
 }
-@media only screen and (max-width: 990px) {
+@media only screen and (max-width: 1200px) {
   .graph {
     padding: 20px;
     margin-top: 50px;

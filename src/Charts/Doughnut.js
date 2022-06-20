@@ -40,7 +40,7 @@ const DoughnutChart = (props) => {
   };
 
   return (
-    <div>
+    <div className="bar-graph">
       <Bar data={data} />
     </div>
   );

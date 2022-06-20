@@ -220,7 +220,14 @@ function App() {
   }
 
   const handleDownloadPNG = useCallback(async () => {
-    const canvas = await html2canvas(document.querySelector(".graph"));
+    let iframe = document.createElement("iframe");
+    iframe.style.width = "1024px";
+    iframe.style.height = "100%";
+    document.body.appendChild(iframe);
+    const canvas = await html2canvas(document.querySelector(".graph"), {
+      windowWidth: 1000,
+      windowHeight: 2000,
+    });
     const dataURL = canvas.toDataURL("image/png");
     downloadjs(dataURL, "maintenance_log_graph.png", "image/png");
   }, []);
