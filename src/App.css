@@ -1,6 +1,6 @@
 .log-container {
   margin: 80px;
-  padding: 20px 60px;
+  padding: 40px 60px;
   background-color: rgb(248, 245, 245);
   border-radius: 10px;
 }
@@ -59,6 +59,7 @@
 .graph h1 {
   margin-left: 40%;
 }
+
 .select-category {
   margin-top: 30px;
   margin-bottom: 30px;
@@ -66,7 +67,6 @@
 @media only screen and (max-width: 990px) {
   .graph {
     padding: 20px;
-    background-color: rgb(228, 227, 227);
     margin-top: 50px;
     border-radius: 10px;
   }
