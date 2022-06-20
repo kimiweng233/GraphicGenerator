@@ -9,7 +9,7 @@
   border-radius: 10px;
   padding: 10px;
   overflow: hidden;
-  background-color: rgb(228, 227, 227);
+  background-color: rgb(238, 236, 236);
 }
 .log-display h1 {
   margin-left: 42%;
@@ -51,7 +51,7 @@
 
 .graph {
   padding: 20px 150px;
-  background-color: rgb(228, 227, 227);
+  background-color: rgb(238, 236, 236);
   margin-top: 50px;
   border-radius: 10px;
 }
