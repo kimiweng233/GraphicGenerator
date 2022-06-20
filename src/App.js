@@ -1,9 +1,12 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Helmet } from "react-helmet";
 import ColumnNames from "./Components/ColumnNames";
 import IssueCard from "./Components/IssueCard";
 import DoughnutChart from "./Charts/Doughnut";
+
+import downloadjs from "downloadjs";
+import html2canvas from "html2canvas";
 
 function App() {
   const XLSX = require("xlsx");
@@ -216,6 +219,12 @@ function App() {
     );
   }
 
+  const handleDownloadPNG = useCallback(async () => {
+    const canvas = await html2canvas(document.querySelector(".graph"));
+    const dataURL = canvas.toDataURL("image/png");
+    downloadjs(dataURL, "maintenance_log_graph.png", "image/png");
+  }, []);
+
   return (
     <div className="log-container">
       <Helmet>
@@ -265,7 +274,9 @@ function App() {
       </div>
       {!hideGraph && (
         <div className="graph">
-          <h1>Graph Viewer</h1>
+          <h1>
+            Maintenance Log for {startDate} to {endDate}
+          </h1>
           <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
             <DoughnutChart
               data_in={Object.values(categories).map((cat) => cat["total"])}
@@ -289,6 +300,7 @@ function App() {
               title_in={`${subCategory} Sub Categories`}
             />
           </span>
+          <button onClick={handleDownloadPNG}>Download Graph as PNG</button>
         </div>
       )}
     </div>
