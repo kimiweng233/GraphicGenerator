@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import ColumnNames from "./Components/ColumnNames";
 import IssueCard from "./Components/IssueCard";
@@ -16,19 +16,17 @@ function App() {
   const [endDate, setEndDate] = useState();
   const [dateFiltered, setDateFiltered] = useState([]);
   const [load, setLoad] = useState("log-display-load");
-  const [hideLabels, setHideLabels] = useState("log-display-load");
-
   const [categories, setCategories] = useState({
-    MES: 0,
-    PLC: 0,
+    "MES": 0,
+    "PLC": 0,
     "Operational Assistance": 0,
-    IT: 0,
-    Material: 0,
-    Customer: 0,
+    "IT": 0,
+    "Material": 0,
+    "Customer": 0,
     "MES-PLC Communication": 0,
-    Others: 0,
+    "Others": 0,
   });
-  const [subCategory, setSubCategory] = useState("MES");
+  const [subCategory, setSubCategory] = useState(["MES",]);
   const [hideGraph, setHideGraph] = useState(true);
 
   const handleFileAsync = async (e) => {
@@ -38,7 +36,6 @@ function App() {
     const workbook = XLSX.read(data);
     const worksheet = workbook.Sheets["Daily Report"];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
-    //adjust for 1 day negative offset
     for (var i = 0; i < jsonData.length; i++) {
       jsonData[i][Object.keys(jsonData[i])[1]] += 1;
     }
@@ -173,20 +170,12 @@ function App() {
   }
 
   const generatePDF = (e) => {
-    const but = e.target;
-    but.style.display = "none";
     let input = window.document.getElementsByClassName("generateGraph")[0];
     html2canvas(input).then((canvas) => {
-      console.log(canvas);
       const img = canvas.toDataURL();
       const pdf = new jsPDF("l", "pt");
-      console.log(input.offsetLeft);
-      console.log(input.offsetTop);
-      console.log(input.clientWidth);
-      console.log(input.clientHeight);
       pdf.addImage(img, "png", 20, 0, 800, 500);
       pdf.save("chart.pdf");
-      but.style.display = "block";
     });
   };
 
@@ -212,6 +201,10 @@ function App() {
       </span>
     );
   }
+
+  useEffect(() => {
+    console.log(subCategory);
+  }, [subCategory]);
 
   return (
     <div className="log-container">
@@ -263,7 +256,7 @@ function App() {
         <div className="graph">
           <h1>Graph Viewer</h1>
           <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
-            <div className="generateGraph">
+            <div className="generateGraph">  
               <DoughnutChart
                 data_in={Object.values(categories).map((cat) => cat["total"])}
                 labels_in={Object.keys(categories)}
@@ -273,18 +266,22 @@ function App() {
             <select
               className="select-category"
               type="select"
-              onChange={(e) => setSubCategory(e.target.value)}
+              onChange={(e) => {
+                setSubCategory(existingItems => [...existingItems.slice(0,0), ...e.target.value.split(',')]);
+              }}
             >
               {Object.keys(categories).map((cat) => {
                 return <option value={cat}>{cat}</option>;
               })}
-            </select>
-
-            <DoughnutChart
-              data_in={Object.values(categories[subCategory]["data"])}
-              labels_in={Object.keys(categories[subCategory]["data"])}
-              title_in={`${subCategory} Sub Categories`}
-            />
+              <option value={Object.keys(categories)}>All Categories</option>
+            </select>         
+            {subCategory.map((cat) => {
+              return <DoughnutChart
+                data_in={Object.values(categories[cat]["data"])}
+                labels_in={Object.keys(categories[cat]["data"])}
+                title_in={`${cat} Sub Categories`}
+              />
+            })}
           </span>
           <button onClick={(e) => generatePDF(e)}>Generate PDF</button>
         </div>

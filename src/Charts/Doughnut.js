@@ -39,10 +39,15 @@ const DoughnutChart = (props) => {
       },
     ],
   };
+  const options={
+    legend: {
+      display: false
+    },
+  };
 
   return (
     <div>
-      <Bar data={data} />
+      <Bar data={data} options={options}/>
     </div>
   );
 };
