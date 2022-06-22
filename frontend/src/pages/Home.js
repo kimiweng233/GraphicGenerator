@@ -7,9 +7,9 @@ import DoughnutChart from "../Charts/Doughnut";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import * as config from "../Components/Config";
 
 const Home = () => {
-  const XLSX = require("xlsx");
 
   const [fileName, setFileName] = useState("None");
   const [sheetData, setSheetData] = useState([]);
@@ -18,15 +18,16 @@ const Home = () => {
   const [dateFiltered, setDateFiltered] = useState([]);
   const [load, setLoad] = useState("log-display-load");
   const [categories, setCategories] = useState({});
-  const [subCategory, setSubCategory] = useState(["MES"]);
+  const [subCategory, setSubCategory] = useState([config.getCategories()[0]]);
   const [hideGraph, setHideGraph] = useState(true);
 
   const handleFileAsync = async (e) => {
+    const XLSX = require("xlsx");
     const file = e.target.files[0];
     setFileName(file.name);
     const data = await file.arrayBuffer();
     const workbook = XLSX.read(data);
-    const worksheet = workbook.Sheets["Daily Report"];
+    const worksheet = workbook.Sheets[config.SPREADSHEET_NAME];
     const jsonData = XLSX.utils.sheet_to_json(worksheet);
     for (var i = 0; i < jsonData.length; i++) {
       jsonData[i][Object.keys(jsonData[i])[1]] += 1;
@@ -65,92 +66,21 @@ const Home = () => {
       setDateFiltered(filtered);
       setLoad("log-display");
 
-      var categories_temp = {
-        MES: {
-          total: 0,
-          data: {
-            "MES signal didn't send/clear": 0,
-            "work order status not correct": 0,
-            "Pisces website not working (9190 rebuild)": 0,
-            "data configuration not correct": 0,
-            "manually insert WO": 0,
-            "Erroneous/Missing": 0,
-          },
-        },
-        PLC: {
-          total: 0,
-          data: {
-            "PLC signal didn't send/clear": 0,
-            "Camera/sensor/clip not working": 0,
-            "RFID not reading carrier number": 0,
-            "PLC hardware failure": 0,
-            "Erroneous/Missing": 0,
-          },
-        },
-        "Operational assist": {
-          total: 0,
-          data: {
-            "rebuild request": 0,
-            "reset station": 0,
-            "reprint label": 0,
-            "problem solved before arrival": 0,
-            "install wrong part": 0,
-            "lost part or label": 0,
-            unmarried: 0,
-            "Kitting sequencing/verification": 0,
-            "Erroneous/Missing": 0,
-          },
-        },
-        IT: {
-          total: 0,
-          data: {
-            "printer failure": 0,
-            "PC failure": 0,
-            "server failure": 0,
-            "cables tangled/disconnect": 0,
-            "install wrong part": 0,
-            "replace paper": 0,
-            "Erroneous/Missing": 0,
-          },
-        },
-        Material: {
-          total: 0,
-          data: {
-            "part revision": 0,
-            "wrong part": 0,
-            "bad part": 0,
-            "no part": 0,
-            "Erroneous/Missing": 0,
-          },
-        },
-        Customer: {
-          total: 0,
-          data: {
-            "cancelled unit": 0,
-            "short/partial shipping": 0,
-            "Erroneous/Missing": 0,
-          },
-        },
-        "MES_PLC communication": {
-          total: 0,
-          data: { handshake: 0, "Erroneous/Missing": 0 },
-        },
-        Others: { total: 0, data: { TBD: 0, "Erroneous/Missing": 0 } },
-        "Erroneous/Missing": { total: 0 },
-      };
+      var categories_temp = config.generateTempDataStructure();
+      categories_temp["Erroneous/Missing"] = { total: 0 };
       filtered.map((entry) => {
         if (
-          "Category" in entry &&
-          Object.keys(categories_temp).includes(entry["Category"])
+          config.CATEGORY_TEXT in entry &&
+          Object.keys(categories_temp).includes(entry[config.CATEGORY_TEXT])
         ) {
-          categories_temp[entry["Category"]]["total"] += 1;
+          categories_temp[entry[config.CATEGORY_TEXT]]["total"] += 1;
           if (
-            "sub_category" in entry &&
-            entry["sub_category"] in categories_temp[entry["Category"]]["data"]
+            config.SUBCATEGORY_TEXT in entry &&
+            entry[config.SUBCATEGORY_TEXT] in categories_temp[entry[config.CATEGORY_TEXT]]["data"]
           ) {
-            categories_temp[entry["Category"]]["data"][entry["sub_category"]] += 1;
+            categories_temp[entry[config.CATEGORY_TEXT]]["data"][entry[config.SUBCATEGORY_TEXT]] += 1;
           } else {
-            categories_temp[entry["Category"]]["data"]["Erroneous/Missing"] += 1;
+            categories_temp[entry[config.CATEGORY_TEXT]]["data"]["Erroneous/Missing"] += 1;
           }
         } else {
           categories_temp["Erroneous/Missing"]["total"] += 1;
@@ -176,24 +106,13 @@ const Home = () => {
     pdf.addImage(img, "png", 5, 20, 200, 100);
 
     pdf.text("Statistics", 15, 130);
+    let tempBody = Object.keys(categories).map((key) => [key, categories[key]["total"]]);
+    tempBody.unshift(["Starting Date", startDate], ["Ending Date", endDate], ["Total Entries", dateFiltered.length]);
     const analytics = {
       startY: 135,
       drawHeader: false,
       theme: "plain",
-      body: [
-        ["Starting Date", startDate],
-        ["Ending Date", endDate],
-        ["Total Entries", dateFiltered.length],
-        ["MES", categories["MES"]["total"]],
-        ["PLC", categories["PLC"]["total"]],
-        ["Operational assist ", categories["Operational assist"]["total"]],
-        ["IT", categories["IT"]["total"]],
-        ["Material", categories["Material"]["total"]],
-        ["Customer", categories["Customer"]["total"]],
-        ["MES_PLC communication", categories["MES_PLC communication"]["total"]],
-        ["Others", categories["Others"]["total"]],
-        ["Erroneous/Missing", categories["Erroneous/Missing"]["total"]],
-      ],
+      body: tempBody,
     };
     autoTable(pdf, analytics);
 
@@ -289,18 +208,18 @@ const Home = () => {
               <span className="stats-subtext">{dateFiltered.length}</span>
             </h3>
             <h3>&#8226;</h3>
-            <h3>Busiest Shift: {mode(dateFiltered, "Shift")}</h3>
+            <h3>Busiest Shift: {mode(dateFiltered, config.SHIFT_TEXT)}</h3>
             <h3>&#8226;</h3>
-            <h3>Most Entries Recorded: {mode(dateFiltered, "MES")}</h3>
+            <h3>Most Entries Recorded: {mode(dateFiltered, config.OPERATOR_TEXT)}</h3>
             <h3>&#8226;</h3>
-            <h3>Most Frequent Station: {mode(dateFiltered, "Station")}</h3>
+            <h3>Most Frequent Station: {mode(dateFiltered, config.STATION_TEXT)}</h3>
           </div>
         </span>
         <div className="entries-container">
           <ColumnNames />
           {dateFiltered.length > 0 &&
             dateFiltered.reverse().map((issue) => {
-              return <IssueCard issue={issue} />;
+              return <IssueCard issue={issue} key={issue[config.NUMBER_TEXT]} />;
             })}
         </div>
       </div>
@@ -340,7 +259,7 @@ const Home = () => {
             {subCategory.map((cat) => {
               let tempClassName = "subGraphs " + cat;
               return (
-                <div className={tempClassName}>
+                <div className={tempClassName} key={tempClassName}>
                   <DoughnutChart
                     data_in={Object.values(categories[cat]["data"])}
                     labels_in={Object.keys(categories[cat]["data"])}
