@@ -1,4 +1,5 @@
 import "../css/issuecard.css";
+import * as config from "../Components/Config";
 
 const IssueCard = ({ issue }) => {
   function ExcelDateToJSDate(date) {
@@ -8,15 +9,15 @@ const IssueCard = ({ issue }) => {
 
   return (
     <div className="issue-container">
-      <span className="issue-element">{issue["NO."]}</span>{" "}
-      <span className="issue-element">{`${ExcelDateToJSDate(issue.Date)
+      <span className="issue-element">{issue[config.NUMBER_TEXT]}</span>{" "}
+      <span className="issue-element">{`${ExcelDateToJSDate(issue[config.DATE_TEXT])
         .toString()
         .slice(0, 15)}`}</span>
-      <span className="issue-element">{issue.Shift}</span>
-      <span className="issue-element"> {issue.MES}</span>
-      <span className="issue-element">{issue.Station}</span>
-      <span className="issue-element">{issue.Category}</span>
-      <span className="issue-element">{issue.sub_category}</span>
+      <span className="issue-element">{issue[config.SHIFT_TEXT]}</span>
+      <span className="issue-element"> {issue[config.OPERATOR_TEXT]}</span>
+      <span className="issue-element">{issue[config.STATION_TEXT]}</span>
+      <span className="issue-element">{issue[config.CATEGORY_TEXT]}</span>
+      <span className="issue-element">{issue[config.SUBCATEGORY_TEXT]}</span>
     </div>
   );
 };
