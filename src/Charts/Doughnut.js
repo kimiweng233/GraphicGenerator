@@ -2,7 +2,7 @@ import { Bar } from "react-chartjs-2";
 import { Chart, registerables, defaults } from "chart.js";
 Chart.register(...registerables);
 
-defaults.font.size = 8;
+defaults.font.size = 12;
 const DoughnutChart = (props) => {
   let { labels_in, data_in, title_in } = props;
   const data = {
@@ -39,10 +39,12 @@ const DoughnutChart = (props) => {
       },
     ],
   };
-  const options={
-    legend: {
-      display: false
-    },
+  const options = {
+    plugins: {
+      legend: {
+        display: false
+      }
+    }
   };
 
   return (

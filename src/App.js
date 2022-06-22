@@ -17,17 +17,7 @@ function App() {
   const [endDate, setEndDate] = useState();
   const [dateFiltered, setDateFiltered] = useState([]);
   const [load, setLoad] = useState("log-display-load");
-  const [categories, setCategories] = useState({
-    "MES": 0,
-    "PLC": 0,
-    "Operational Assistance": 0,
-    "IT": 0,
-    "Material": 0,
-    "Customer": 0,
-    "MES-PLC Communication": 0,
-    "Others": 0,
-    "Erroneous Labels": 0,
-  });
+  const [categories, setCategories] = useState({});
   const [subCategory, setSubCategory] = useState(["MES",]);
   const [hideGraph, setHideGraph] = useState(true);
 
