@@ -9,6 +9,9 @@
   display: inline;
 }
 
+.help-container h3 {
+  margin-left: -8px;
+}
 .help-container a {
   display: block;
   height: 40px;

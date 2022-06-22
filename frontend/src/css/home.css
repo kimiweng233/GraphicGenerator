@@ -77,16 +77,31 @@
   background-color: rgb(238, 236, 236);
   margin-top: 50px;
   border-radius: 10px;
+  text-align: center;
 }
 
 .graph h1 {
-  margin-left: 40%;
+  margin-left: 20px;
+}
+
+.graph h3 {
+  text-align: center;
 }
 
 .select-category {
   margin-top: 30px;
   margin-bottom: 30px;
+  margin-right: 100%;
 }
+
+.long-break {
+  height: 20px;
+}
+
+.x-long-break {
+  height: 50px;
+}
+
 @media only screen and (max-width: 990px) {
   .graph {
     padding: 20px;

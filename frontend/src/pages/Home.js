@@ -282,6 +282,7 @@ const Home = () => {
       </button>
       <div className={load}>
         <h1>Log Viewer</h1>
+        <div className="long-break"></div>
         <span className="fixed-text">
           <div className="stats">
             <h3>
@@ -307,6 +308,8 @@ const Home = () => {
       {!hideGraph && (
         <div className="graph">
           <h1>Graph Viewer</h1>
+          <div className="long-break"></div>
+          <h3>All Categories</h3>
           <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
             <div className="generateGraph">
               <DoughnutChart
@@ -341,11 +344,13 @@ const Home = () => {
               let tempClassName = "subGraphs " + cat;
               return (
                 <div className={tempClassName}>
+                  <h3>{cat}</h3>
                   <DoughnutChart
                     data_in={Object.values(categories[cat]["data"])}
                     labels_in={Object.keys(categories[cat]["data"])}
                     title_in={`${cat} Sub Categories`}
                   />
+                  <div className="x-long-break"></div>
                 </div>
               );
             })}
