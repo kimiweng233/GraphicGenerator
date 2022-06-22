@@ -270,9 +270,9 @@ function App() {
             <h3>&#8226;</h3>
             <h3>Most Frequent Station: {mode(dateFiltered, "Station")}</h3>
           </div>
-          <ColumnNames />
         </span>
         <div className="entries-container">
+          <ColumnNames />
           {dateFiltered.length > 0 &&
             dateFiltered.reverse().map((issue) => {
               return <IssueCard issue={issue} />;
@@ -283,7 +283,7 @@ function App() {
         <div className="graph">
           <h1>Graph Viewer</h1>
           <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
-            <div className="generateGraph">  
+            <div className="generateGraph">
               <DoughnutChart
                 data_in={Object.values(categories).map((cat) => cat["total"])}
                 labels_in={Object.keys(categories)}
@@ -294,7 +294,10 @@ function App() {
               className="select-category"
               type="select"
               onChange={(e) => {
-                setSubCategory(existingItems => [...existingItems.slice(0,0), ...e.target.value.split(',')]);
+                setSubCategory((existingItems) => [
+                  ...existingItems.slice(0, 0),
+                  ...e.target.value.split(","),
+                ]);
               }}
             >
               {Object.keys(categories).map((cat) => {
