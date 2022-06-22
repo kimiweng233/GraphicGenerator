@@ -6,6 +6,7 @@ import IssueCard from "./Components/IssueCard";
 import DoughnutChart from "./Charts/Doughnut";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import autoTable from 'jspdf-autotable';
 
 function App() {
   const XLSX = require("xlsx");
@@ -25,6 +26,7 @@ function App() {
     "Customer": 0,
     "MES-PLC Communication": 0,
     "Others": 0,
+    "Erroneous Labels": 0,
   });
   const [subCategory, setSubCategory] = useState(["MES",]);
   const [hideGraph, setHideGraph] = useState(true);
@@ -74,7 +76,7 @@ function App() {
       setLoad("log-display");
 
       var categories_temp = {
-        MES: {
+        "MES": {
           total: 0,
           data: {
             "MES signal didn't send/clear": 0,
@@ -82,19 +84,17 @@ function App() {
             "Pisces website not working (9190 rebuild)": 0,
             "data configuration not correct": 0,
             "manually insert WO": 0,
-            "N/A": 0,
-            Others: 0,
+            "Erroneous/Missing": 0,
           },
         },
-        PLC: {
+        "PLC": {
           total: 0,
           data: {
             "PLC signal didn't send/clear": 0,
             "Camera/sensor/clip not working": 0,
             "RFID not reading carrier number": 0,
             "PLC hardware failure": 0,
-            "N/A": 0,
-            Others: 0,
+            "Erroneous/Missing": 0,
           },
         },
         "Operational assist": {
@@ -108,11 +108,10 @@ function App() {
             "lost part or label": 0,
             unmarried: 0,
             "Kitting sequencing/verification": 0,
-            "N/A": 0,
-            Others: 0,
+            "Erroneous/Missing": 0,
           },
         },
-        IT: {
+        "IT": {
           total: 0,
           data: {
             "printer failure": 0,
@@ -121,43 +120,40 @@ function App() {
             "cables tangled/disconnect": 0,
             "install wrong part": 0,
             "replace paper": 0,
-            "N/A": 0,
-            Others: 0,
+            "Erroneous/Missing": 0,
           },
         },
-        Material: {
+        "Material": {
           total: 0,
           data: {
             "part revision": 0,
             "wrong part": 0,
             "bad part": 0,
             "no part": 0,
-            "N/A": 0,
-            Others: 0,
+            "Erroneous/Missing": 0,
           },
         },
-        Customer: {
+        "Customer": {
           total: 0,
-          data: { "cancelled unit": 0, "short/partial shipping": 0, "N/A": 0, Others: 0 },
+          data: { "cancelled unit": 0, "short/partial shipping": 0, "Erroneous/Missing": 0 },
         },
         "MES_PLC communication": {
           total: 0,
-          data: { handshake: 0, "N/A": 0, Others: 0 },
+          data: { handshake: 0, "Erroneous/Missing": 0 },
         },
-        Others: { total: 0, data: { TBD: 0, "N/A": 0, Others: 0 } },
+        "Others": { total: 0, data: { TBD: 0, "Erroneous/Missing": 0} },
+        "Erroneous/Missing": { total: 0 },
       };
       filtered.map((entry) => {
-        if ("Category" in entry) {
+        if ("Category" in entry && Object.keys(categories_temp).includes(entry["Category"])) {
           categories_temp[entry["Category"]]["total"] += 1;
-          if ("sub_category" in entry) {
-            if (entry["sub_category"] in categories_temp[entry["Category"]]["data"]) {
-              categories_temp[entry["Category"]]["data"][entry["sub_category"]] += 1;
-            } else {
-              categories_temp[entry["Category"]]["data"]["Others"] += 1;
-            }
+          if ("sub_category" in entry && entry["sub_category"] in categories_temp[entry["Category"]]["data"]) {
+            categories_temp[entry["Category"]]["data"][entry["sub_category"]] += 1;
           } else {
-            categories_temp[entry["Category"]]["data"]["N/A"] += 1;
-          }
+            categories_temp[entry["Category"]]["data"]["Erroneous/Missing"] += 1;
+          } 
+        } else {
+          categories_temp["Erroneous/Missing"]["total"] += 1;
         }
       });
       setCategories(categories_temp);
@@ -169,14 +165,59 @@ function App() {
     return new Date(Math.round((date - 25569) * 86400 * 1000));
   }
 
-  const generatePDF = (e) => {
-    let input = window.document.getElementsByClassName("generateGraph")[0];
-    html2canvas(input).then((canvas) => {
-      const img = canvas.toDataURL();
-      const pdf = new jsPDF("l", "pt");
-      pdf.addImage(img, "png", 20, 0, 800, 500);
-      pdf.save("chart.pdf");
-    });
+  async function generatePDF(e) {
+    const pdf = new jsPDF();
+    const title = "Maintenance Log Data Report from " + startDate + " to " + endDate;
+    pdf.text(title, 30, 13);
+    let place_holder_main_canvas = await html2canvas(window.document.getElementsByClassName("generateGraph")[0])
+    const img = place_holder_main_canvas.toDataURL();
+    pdf.addImage(img, "png", 5, 20, 200, 100);
+
+    pdf.text("Statistics", 15, 130);
+    const analytics = {
+      startY: 135,
+      drawHeader: false,
+      theme: "plain",
+      body: [["Starting Date", startDate],
+      ["Ending Date", endDate],
+      ["Total Entries", dateFiltered.length],
+      ["MES", categories["MES"]["total"]],
+      ["PLC", categories["PLC"]["total"]],
+      ["Operational assist ", categories["Operational assist"]["total"]],
+      ["IT", categories["IT"]["total"]],
+      ["Material", categories["Material"]["total"]],
+      ["Customer", categories["Customer"]["total"]],
+      ["MES_PLC communication", categories["MES_PLC communication"]["total"]],
+      ["Others", categories["Others"]["total"]],
+      ["Erroneous/Missing", categories["Erroneous/Missing"]["total"]]],
+    };
+    autoTable(pdf, analytics);
+
+    pdf.addPage();
+
+    let elements = window.document.getElementsByClassName("subGraphs")
+    for (var i=0, yPlacement=20; i<elements.length; i++) {
+      const categoryName = elements[i].className.substring(elements[i].className.indexOf(' ') + 1);
+      const tempData = categories[categoryName]["data"]
+      pdf.text(categoryName + " Category Data", 16, yPlacement);
+      const graphBody = Object.keys(tempData).map((key) => [key, tempData[key]])
+      const subGraphAnalytics = {
+        startY: yPlacement + 10,
+        drawHeader: false,
+        tableWidth: 80,
+        theme: "plain",
+        body: graphBody,
+      };
+      autoTable(pdf, subGraphAnalytics);
+      let place_holder_canvas = await html2canvas(elements[i]);
+      pdf.addImage(place_holder_canvas.toDataURL(), "png", 105, yPlacement + 5, 100, 50, `img${i}`);
+      yPlacement += (8 * graphBody.length + 20 > 70) ? 8 * graphBody.length + 20 : 70;
+      if (yPlacement + 70 >= pdf.internal.pageSize.getHeight()) {
+        pdf.addPage();
+        yPlacement = 20;
+      }
+    }
+    pdf.save("report.pdf")
   };
 
   function mode(array, specifier) {
@@ -201,10 +242,6 @@ function App() {
       </span>
     );
   }
-
-  useEffect(() => {
-    console.log(subCategory);
-  }, [subCategory]);
 
   return (
     <div className="log-container">
@@ -271,16 +308,20 @@ function App() {
               }}
             >
               {Object.keys(categories).map((cat) => {
+                if (cat != "Erroneous/Missing")
                 return <option value={cat}>{cat}</option>;
               })}
-              <option value={Object.keys(categories)}>All Categories</option>
-            </select>         
+              <option value={Object.keys(categories).slice(0, Object.keys(categories).length-1)}>All Categories</option>
+            </select>        
             {subCategory.map((cat) => {
-              return <DoughnutChart
-                data_in={Object.values(categories[cat]["data"])}
-                labels_in={Object.keys(categories[cat]["data"])}
-                title_in={`${cat} Sub Categories`}
-              />
+              let tempClassName = "subGraphs " + cat;
+              return <div className={tempClassName}>
+                <DoughnutChart
+                  data_in={Object.values(categories[cat]["data"])}
+                  labels_in={Object.keys(categories[cat]["data"])}
+                  title_in={`${cat} Sub Categories`}
+                />
+              </div>
             })}
           </span>
           <button onClick={(e) => generatePDF(e)}>Generate PDF</button>
