@@ -266,6 +266,7 @@ const Home = () => {
         />
       </Helmet>
       <h1> Maintenance Log Graphic Generator </h1>
+      <a href="/help">&#x3f;</a>
       <input type="file" onChange={(e) => handleFileAsync(e)} />
       <p>
         File Uploaded: <span>{fileName}</span>

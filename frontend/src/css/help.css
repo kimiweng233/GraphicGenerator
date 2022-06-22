@@ -6,5 +6,30 @@
 }
 
 .help-container h1 {
-  margin-bottom: 50px;
+  display: inline;
+}
+
+.help-container a {
+  display: block;
+  height: 40px;
+  width: 40px;
+  line-height: 34px;
+  text-decoration: none;
+  -moz-border-radius: 30px; /* or 50% */
+  border-radius: 30px; /* or 50% */
+  font-weight: 900;
+  background-color: black;
+  color: white;
+  text-align: center;
+  font-size: 2em;
+  margin-left: 100%;
+  transform: translateY(-36px);
+}
+
+.help-container img {
+  width: 70%;
+  height: 70%;
+}
+.fake-button {
+  pointer-events: none;
 }

@@ -5,6 +5,29 @@
   border-radius: 10px;
 }
 
+.log-container h1 {
+  display: inline;
+}
+.log-container a {
+  display: block;
+  height: 40px;
+  width: 40px;
+  line-height: 40px;
+  text-decoration: none;
+  -moz-border-radius: 30px; /* or 50% */
+  border-radius: 30px; /* or 50% */
+  font-weight: 600;
+  background-color: black;
+  color: white;
+  text-align: center;
+  font-size: 2em;
+  margin-left: 100%;
+  transform: translateY(-36px);
+}
+.log-container a:hover {
+  background-color: rgb(75, 75, 75);
+}
+
 .log-display {
   border-radius: 10px;
   padding: 10px;
