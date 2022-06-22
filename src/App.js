@@ -17,16 +17,16 @@ function App() {
   const [dateFiltered, setDateFiltered] = useState([]);
   const [load, setLoad] = useState("log-display-load");
   const [categories, setCategories] = useState({
-    "MES": 0,
-    "PLC": 0,
+    MES: 0,
+    PLC: 0,
     "Operational Assistance": 0,
-    "IT": 0,
-    "Material": 0,
-    "Customer": 0,
+    IT: 0,
+    Material: 0,
+    Customer: 0,
     "MES-PLC Communication": 0,
-    "Others": 0,
+    Others: 0,
   });
-  const [subCategory, setSubCategory] = useState(["MES",]);
+  const [subCategory, setSubCategory] = useState(["MES"]);
   const [hideGraph, setHideGraph] = useState(true);
 
   const handleFileAsync = async (e) => {
@@ -243,9 +243,9 @@ function App() {
             <h3>&#8226;</h3>
             <h3>Most Frequent Station: {mode(dateFiltered, "Station")}</h3>
           </div>
-          <ColumnNames />
         </span>
         <div className="entries-container">
+          <ColumnNames />
           {dateFiltered.length > 0 &&
             dateFiltered.reverse().map((issue) => {
               return <IssueCard issue={issue} />;
@@ -256,7 +256,7 @@ function App() {
         <div className="graph">
           <h1>Graph Viewer</h1>
           <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
-            <div className="generateGraph">  
+            <div className="generateGraph">
               <DoughnutChart
                 data_in={Object.values(categories).map((cat) => cat["total"])}
                 labels_in={Object.keys(categories)}
@@ -267,20 +267,25 @@ function App() {
               className="select-category"
               type="select"
               onChange={(e) => {
-                setSubCategory(existingItems => [...existingItems.slice(0,0), ...e.target.value.split(',')]);
+                setSubCategory((existingItems) => [
+                  ...existingItems.slice(0, 0),
+                  ...e.target.value.split(","),
+                ]);
               }}
             >
               {Object.keys(categories).map((cat) => {
                 return <option value={cat}>{cat}</option>;
               })}
               <option value={Object.keys(categories)}>All Categories</option>
-            </select>         
+            </select>
             {subCategory.map((cat) => {
-              return <DoughnutChart
-                data_in={Object.values(categories[cat]["data"])}
-                labels_in={Object.keys(categories[cat]["data"])}
-                title_in={`${cat} Sub Categories`}
-              />
+              return (
+                <DoughnutChart
+                  data_in={Object.values(categories[cat]["data"])}
+                  labels_in={Object.keys(categories[cat]["data"])}
+                  title_in={`${cat} Sub Categories`}
+                />
+              );
             })}
           </span>
           <button onClick={(e) => generatePDF(e)}>Generate PDF</button>
