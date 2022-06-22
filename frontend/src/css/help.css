@@ -3,6 +3,7 @@
   padding: 40px 60px;
   background-color: rgb(248, 245, 245);
   border-radius: 10px;
+  scroll-behavior: smooth;
 }
 
 .help-container h1 {
@@ -12,7 +13,7 @@
 .help-container h3 {
   margin-left: -8px;
 }
-.help-container a {
+.help-container .back-button {
   display: block;
   height: 40px;
   width: 40px;
@@ -29,10 +30,23 @@
   transform: translateY(-36px);
 }
 
+.help-container .back-button:hover {
+  background-color: rgb(75, 75, 75);
+}
+
+.help-container a {
+  display: block;
+  text-decoration: underline;
+  color: rgb(36, 36, 36);
+}
 .help-container img {
   width: 70%;
   height: 70%;
 }
 .fake-button {
   pointer-events: none;
+}
+
+.help-container span {
+  font-weight: bold;
 }

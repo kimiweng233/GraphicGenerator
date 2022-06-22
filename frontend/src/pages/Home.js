@@ -271,6 +271,7 @@ const Home = () => {
               let tempClassName = "subGraphs " + cat;
               return (
                 <div className={tempClassName} key={tempClassName}>
+                  <h3>{cat}</h3>
                   <DoughnutChart
                     data_in={Object.values(categories[cat]["data"])}
                     labels_in={Object.keys(categories[cat]["data"])}
