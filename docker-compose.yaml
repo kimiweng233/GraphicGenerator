@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  graphic-generator:
+    build: ./graphic-generator
+    container_name: graphic-generator-c
+    ports:
+      - "3000: 3000"
+    stdin_open: true
+    tty: true
