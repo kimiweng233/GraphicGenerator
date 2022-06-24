@@ -20,6 +20,10 @@ const Home = () => {
   const [subCategory, setSubCategory] = useState([config.getCategories()[0]]);
   const [hideGraph, setHideGraph] = useState(true);
 
+  useEffect(() => {
+    document.title = "Graphics Generator";
+  }, [])
+
   const handleFileAsync = async (e) => {
     const XLSX = require("xlsx");
     const file = e.target.files[0];

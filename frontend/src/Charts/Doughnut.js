@@ -2,6 +2,13 @@ import { Bar } from "react-chartjs-2";
 import { Chart, registerables, defaults } from "chart.js";
 Chart.register(...registerables);
 
+function handleClick(evt)
+{
+    var activeElement = Chart.getElementAtEvent(evt);
+    console.log(activeElement);
+    console.log("Goop!");
+  }
+
 defaults.font.size = 12;
 const DoughnutChart = (props) => {
   let { labels_in, data_in, title_in } = props;
@@ -44,7 +51,8 @@ const DoughnutChart = (props) => {
       legend: {
         display: false
       }
-    }
+    },
+    onClick: handleClick
   };
 
   return (

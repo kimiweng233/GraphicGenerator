@@ -1,6 +1,11 @@
 import "../css/help.css";
+import React, { useEffect } from "react";
 
 const Help = () => {
+  useEffect(() => {
+    document.title = "Instructions";
+  }, [])
+
   return (
     <div className="help-container">
       <h1>How to use Maintenance Log Graphic Generator</h1>
