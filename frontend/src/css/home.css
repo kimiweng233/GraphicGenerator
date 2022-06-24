@@ -105,7 +105,7 @@ th {
   text-align: start;
   align-self: center;
   margin-top: -50px;
-  margin-right: 30px;
+
   margin-bottom: 30px;
 }
 
@@ -143,5 +143,15 @@ th {
     padding: 20px;
     margin-top: 50px;
     border-radius: 10px;
+  }
+
+  .graph-section {
+    padding: 20px;
+    width: 100%;
+  }
+
+  .display-button {
+    margin-left: 80%;
+    margin-left: 20px;
   }
 }

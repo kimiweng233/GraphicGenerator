@@ -251,7 +251,7 @@ const Home = () => {
         <div className="graph">
           <h1>Graph Viewer</h1>
           <button className="display-button" onClick={handleChangeViewOnClick}>
-            Display Category Data
+            Toggle Category Data
           </button>
           <div className="long-break"></div>
           <h3>All Categories</h3>
