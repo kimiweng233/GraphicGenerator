@@ -80,10 +80,46 @@
   text-align: center;
 }
 
+.graph-styling {
+  margin-top: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top: 30px;
+  margin-right: 20px;
+}
+
+td,
+th {
+  border: 1px solid #464646;
+  text-align: left;
+  padding: 2px;
+  font-size: 16px;
+}
+
+.category-data {
+  text-align: start;
+  align-self: center;
+  margin-top: -50px;
+  margin-right: 30px;
+  margin-bottom: 30px;
+}
+
+.graph-section {
+  width: 500px;
+  align-self: center;
+}
 .graph h1 {
   margin-left: 20px;
 }
 
+.display-button {
+  margin-left: 100%;
+}
 .graph h3 {
   text-align: center;
 }

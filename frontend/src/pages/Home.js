@@ -16,13 +16,15 @@ const Home = () => {
   const [endDate, setEndDate] = useState();
   const [dateFiltered, setDateFiltered] = useState([]);
   const [load, setLoad] = useState("log-display-load");
+  const [showTableClass, setShowTableClass] = useState("show-table");
   const [categories, setCategories] = useState({});
   const [subCategory, setSubCategory] = useState([]);
   const [hideGraph, setHideGraph] = useState(true);
+  const [showTable, setShowTable] = useState(false);
 
   useEffect(() => {
-    document.title = "Graphics Generator";
-  }, [])
+    document.title = "Maintenance Log Graphic Generator";
+  }, []);
 
   const handleFileAsync = async (e) => {
     const XLSX = require("xlsx");
@@ -188,11 +190,13 @@ const Home = () => {
   }
 
   function modeWrapper(array, specifier) {
-    return (
-      <span className="stats-subtext">
-        {mode(array, specifier)[0]} - {mode(array, specifier)[1]} entries
-      </span>
-    )
+    if (mode(array, specifier)) {
+      return (
+        <span className="stats-subtext">
+          {mode(array, specifier)[0]} - {mode(array, specifier)[1]} entries
+        </span>
+      )
+    }
   }
 
   function ShowSubGraphOnClick(index) {
@@ -208,6 +212,15 @@ const Home = () => {
   function PlaceholderFunction() {
 
   }
+
+  const handleChangeViewOnClick = (e) => {
+    setShowTable((current) => !current);
+    if (setShowTable === false) {
+      setShowTableClass("show-table");
+    } else {
+      setShowTableClass("hide-table");
+    }
+  };
 
   return (
     <div className="log-container">
@@ -252,7 +265,7 @@ const Home = () => {
         <div className="entries-container">
           <ColumnNames />
           {dateFiltered.length > 0 &&
-            dateFiltered.reverse().map((issue) => {
+            dateFiltered.map((issue) => {
               return <IssueCard issue={issue} key={issue[config.NUMBER_TEXT]} />;
             })}
         </div>
@@ -260,24 +273,62 @@ const Home = () => {
       {!hideGraph && (
         <div className="graph">
           <h1>Graph Viewer</h1>
+          <button className="display-button" onClick={handleChangeViewOnClick}>
+            Display Category Data
+          </button>
           <div className="long-break"></div>
           <h3>All Categories</h3>
           <span style={{ width: "700px", height: "350px", margin: "0 auto" }}>
-            <div className="generateGraph">
-              <DoughnutChart
-                data_in={Object.values(categories).map((cat) => cat["total"])}
-                labels_in={Object.keys(categories)}
-                title_in="All Categories"
-                onClickFunction={ShowSubGraphOnClick}
-              />
-            </div>
+            {showTable && (
+              <div className="graph-styling">
+                <div className="category-data">
+                  <table>
+                  <thead>
+                    <tr>
+                      <th>Category</th>
+                      <th>Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.keys(categories).map((key) => (
+                      <tr>
+                        <td>{key}:</td>
+                        <td>
+                          {categories[key]["total"]}
+                          <div className="break"></div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  </table>
+                </div>
+                <div className="graph-section generateGraph">
+                  <DoughnutChart
+                    data_in={Object.values(categories).map((cat) => cat["total"])}
+                    labels_in={Object.keys(categories)}
+                    title_in="All Categories"
+                    onClickFunction={ShowSubGraphOnClick}
+                  />
+                </div>
+              </div>
+            )}
+            {!showTable && (
+              <div className="generateGraph">
+                <DoughnutChart
+                  data_in={Object.values(categories).map((cat) => cat["total"])}
+                  labels_in={Object.keys(categories)}
+                  title_in="All Categories"
+                  onClickFunction={ShowSubGraphOnClick}
+                />
+              </div>
+            )}
             <p></p>
             <button onClick={(e) => {
-                setSubCategory((existingItems) => [
-                  ...existingItems.slice(0, 0),
-                  ...config.getCategories(),
-                ]);
-              }}>Get All Sub Category Graphs</button>
+              setSubCategory((existingItems) => [
+                ...existingItems.slice(0, 0),
+                ...config.getCategories(),
+              ]);
+            }}>Get All Sub Category Graphs</button>
             <p></p>
             {subCategory.map((cat) => {
               let tempClassName = "subGraphs " + cat;
