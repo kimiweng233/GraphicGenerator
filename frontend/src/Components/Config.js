@@ -28,6 +28,8 @@ export function generateTempDataStructure() {
             "Camera/sensor/clip not working": 0,
             "RFID not reading carrier number": 0,
             "PLC hardware failure": 0,
+
+            
             "Erroneous/Missing": 0,
           },
         },
