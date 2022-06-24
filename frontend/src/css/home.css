@@ -80,7 +80,7 @@
   text-align: center;
 }
 
-.generateGraph {
+.graph-styling {
   margin-top: 30px;
   display: flex;
   flex-wrap: wrap;
