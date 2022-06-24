@@ -3,8 +3,8 @@ import { Chart, registerables, defaults } from "chart.js";
 Chart.register(...registerables);
 
 defaults.font.size = 12;
-const DoughnutChart = (props) => {
-  let { labels_in, data_in, title_in, onClickFunction } = props;
+const DoughnutSubChart = (props) => {
+  let { labels_in, data_in, title_in } = props;
   const data = {
     labels: labels_in,
     datasets: [
@@ -45,9 +45,6 @@ const DoughnutChart = (props) => {
         display: false
       }
     },
-    onClick: function(evt, element) {
-      onClickFunction(element["0"]["element"]["$context"]["parsed"]["x"]);
-    },
   };
 
   return (
@@ -57,4 +54,4 @@ const DoughnutChart = (props) => {
   );
 };
 
-export default DoughnutChart;
+export default DoughnutSubChart;

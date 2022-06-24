@@ -17,7 +17,7 @@ const Home = () => {
   const [dateFiltered, setDateFiltered] = useState([]);
   const [load, setLoad] = useState("log-display-load");
   const [categories, setCategories] = useState({});
-  const [subCategory, setSubCategory] = useState([config.getCategories()[0]]);
+  const [subCategory, setSubCategory] = useState([]);
   const [hideGraph, setHideGraph] = useState(true);
 
   useEffect(() => {
@@ -120,6 +120,9 @@ const Home = () => {
       ["Ending Date", endDate],
       ["Total Entries", dateFiltered.length]
     );
+    tempBody.push(["Busiest Shift", mode(dateFiltered, config.SHIFT_TEXT)[0] + " (" + mode(dateFiltered, config.SHIFT_TEXT)[1] + " entries)"], 
+    ["Most Active Operator", mode(dateFiltered, config.OPERATOR_TEXT)[0] + " (" + mode(dateFiltered, config.OPERATOR_TEXT)[1] + " entries)"], 
+    ["Most Frequent Station", mode(dateFiltered, config.STATION_TEXT)[0] + " (" + mode(dateFiltered, config.STATION_TEXT)[1] + " entries)"]);
     const analytics = {
       startY: 135,
       drawHeader: false,
@@ -181,11 +184,29 @@ const Home = () => {
         }
       }
     }
+    return [maxEl, maxCount];
+  }
+
+  function modeWrapper(array, specifier) {
     return (
       <span className="stats-subtext">
-        {maxEl} - {maxCount} entries
+        {mode(array, specifier)[0]} - {mode(array, specifier)[1]} entries
       </span>
-    );
+    )
+  }
+
+  function ShowSubGraphOnClick(index) {
+    if (index < config.getCategories().length) {
+      const categoryList = [config.getCategories()[index]];
+      setSubCategory((existingItems) => [
+        ...existingItems.slice(0, 0),
+        ...categoryList,
+      ]);
+    }
+  }
+
+  function PlaceholderFunction() {
+
   }
 
   return (
@@ -221,11 +242,11 @@ const Home = () => {
               <span className="stats-subtext">{dateFiltered.length}</span>
             </h3>
             <h3>&#8226;</h3>
-            <h3>Busiest Shift: {mode(dateFiltered, config.SHIFT_TEXT)}</h3>
+            <h3>Busiest Shift: {modeWrapper(dateFiltered, config.SHIFT_TEXT)}</h3>
             <h3>&#8226;</h3>
-            <h3>Most Entries Recorded: {mode(dateFiltered, config.OPERATOR_TEXT)}</h3>
+            <h3>Most Entries Recorded: {modeWrapper(dateFiltered, config.OPERATOR_TEXT)}</h3>
             <h3>&#8226;</h3>
-            <h3>Most Frequent Station: {mode(dateFiltered, config.STATION_TEXT)}</h3>
+            <h3>Most Frequent Station: {modeWrapper(dateFiltered, config.STATION_TEXT)}</h3>
           </div>
         </span>
         <div className="entries-container">
@@ -247,30 +268,17 @@ const Home = () => {
                 data_in={Object.values(categories).map((cat) => cat["total"])}
                 labels_in={Object.keys(categories)}
                 title_in="All Categories"
+                onClickFunction={ShowSubGraphOnClick}
               />
             </div>
-            <select
-              className="select-category"
-              type="select"
-              onChange={(e) => {
+            <p></p>
+            <button onClick={(e) => {
                 setSubCategory((existingItems) => [
                   ...existingItems.slice(0, 0),
-                  ...e.target.value.split(","),
+                  ...config.getCategories(),
                 ]);
-              }}
-            >
-              {Object.keys(categories).map((cat) => {
-                if (cat != "Erroneous/Missing") return <option value={cat}>{cat}</option>;
-              })}
-              <option
-                value={Object.keys(categories).slice(
-                  0,
-                  Object.keys(categories).length - 1
-                )}
-              >
-                All Categories
-              </option>
-            </select>
+              }}>Get All Sub Category Graphs</button>
+            <p></p>
             {subCategory.map((cat) => {
               let tempClassName = "subGraphs " + cat;
               return (
@@ -280,13 +288,16 @@ const Home = () => {
                     data_in={Object.values(categories[cat]["data"])}
                     labels_in={Object.keys(categories[cat]["data"])}
                     title_in={`${cat} Sub Categories`}
+                    onClickFunction={PlaceholderFunction}
                   />
                   <div className="x-long-break"></div>
                 </div>
               );
             })}
           </span>
-          <button onClick={(e) => generatePDF(e)}>Generate PDF</button>
+          {subCategory.length > 1 && (
+            <button onClick={(e) => generatePDF(e)}>Generate PDF</button>
+          )}
         </div>
       )}
     </div>
